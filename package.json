@@ -1,9 +1,9 @@
 {
-  "name": "collapse-docs",
-  "displayName": "Collapse Docs",
-  "description": "Quickly collapse or uncollapse all docstrings and JSDoc comments via right-click menu.",
+  "name": "sneaky-docs",
+  "displayName": "Sneaky Docs",
+  "description": "Collapse, export, and auto-generate documentation for Python and JavaScript/TypeScript files with zero setup.",
   "publisher": "Oskarlypka",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "engines": {
     "vscode": "^1.60.0"
   },
@@ -17,24 +17,42 @@
     "commands": [
       {
         "command": "collapseDocs.run",
-        "title": "Collapse All Docstrings / JSDoc"
+        "title": "Collapse All Docs"
       },
       {
         "command": "collapseDocs.unfold",
-        "title": "Uncollapse All Docstrings / JSDoc"
+        "title": "Uncollapse All Docs"
+      },
+      {
+        "command": "collapseDocs.exportFunction",
+        "title": "Update Module Export"
+      },
+      {
+        "command": "collapseDocs.generateDocs",
+        "title": "generate Docs"
       }
     ],
     "menus": {
       "editor/context": [
         {
           "command": "collapseDocs.run",
-          "when": "editorLangId == python || editorLangId == javascript || editorLangId == typescript",
-          "group": "navigation"
+          "when": "editorLangId == javascript || editorLangId == typescript || editorLangId == python",
+          "group": "collapseDocsGroup@1"
         },
         {
           "command": "collapseDocs.unfold",
-          "when": "editorLangId == python || editorLangId == javascript || editorLangId == typescript",
-          "group": "navigation"
+          "when": "editorLangId == javascript || editorLangId == typescript || editorLangId == python",
+          "group": "collapseDocsGroup@2"
+        },
+        {
+          "command": "collapseDocs.exportFunction",
+          "when": "editorLangId == javascript || editorLangId == typescript",
+          "group": "collapseDocsGroup@3"
+        },
+        {
+          "command": "collapseDocs.generateDocs",
+          "when": "editorLangId == javascript || editorLangId == typescript",
+          "group": "collapseDocsGroup@4"
         }
       ]
     }
