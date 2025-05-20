@@ -3,7 +3,7 @@
   "displayName": "Sneaky Docs",
   "description": "Collapse, export, and auto-generate documentation for Python and JavaScript/TypeScript files with zero setup.",
   "publisher": "Oskarlypka",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "engines": {
     "vscode": "^1.60.0"
   },
