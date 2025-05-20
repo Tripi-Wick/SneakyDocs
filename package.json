@@ -1,9 +1,9 @@
 {
-  "name": "sneaky-docs",
-  "displayName": "Sneaky Docs",
-  "description": "Collapse, export, and auto-generate documentation for Python and JavaScript/TypeScript files with zero setup.",
+  "name": "collapse-docs",
+  "displayName": "Collapse Docs",
+  "description": "Quickly collapse or uncollapse all docstrings and JSDoc comments via right-click menu.",
   "publisher": "Oskarlypka",
-  "version": "1.3.0",
+  "version": "1.2.0",
   "engines": {
     "vscode": "^1.60.0"
   },
