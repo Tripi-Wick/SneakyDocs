@@ -10,7 +10,10 @@
   "activationEvents": [
     "onLanguage:python",
     "onLanguage:javascript",
-    "onLanguage:typescript"
+    "onLanguage:typescript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescriptreact",
+    "onCommand:collapseDocs.toggle"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -22,6 +25,10 @@
       {
         "command": "collapseDocs.unfold",
         "title": "Uncollapse All Docs"
+      },
+      {
+        "command": "collapseDocs.toggle",
+        "title": "Toggle Collapse Docs"
       },
       {
         "command": "collapseDocs.exportFunction",
@@ -36,12 +43,17 @@
       "editor/context": [
         {
           "command": "collapseDocs.run",
-          "when": "editorLangId == javascript || editorLangId == typescript || editorLangId == python",
+          "when": "editorLangId == javascript || editorLangId == typescript || editorLangId == javascriptreact || editorLangId == typescriptreact || editorLangId == python",
           "group": "collapseDocsGroup@1"
         },
         {
           "command": "collapseDocs.unfold",
-          "when": "editorLangId == javascript || editorLangId == typescript || editorLangId == python",
+          "when": "editorLangId == javascript || editorLangId == typescript || editorLangId == javascriptreact || editorLangId == typescriptreact || editorLangId == python",
+          "group": "collapseDocsGroup@2"
+        },
+        {
+          "command": "collapseDocs.toggle",
+          "when": "editorLangId == javascript || editorLangId == typescript || editorLangId == javascriptreact || editorLangId == typescriptreact || editorLangId == python",
           "group": "collapseDocsGroup@2"
         },
         {
@@ -55,7 +67,14 @@
           "group": "collapseDocsGroup@4"
         }
       ]
-    }
+    },
+    "keybindings": [
+      {
+        "command": "collapseDocs.toggle",
+        "key": "ctrl+shift+alt+d",
+        "when": "editorTextFocus && (editorLangId == javascript || editorLangId == typescript || editorLangId == javascriptreact || editorLangId == typescriptreact || editorLangId == python)"
+      }
+    ]
   },
   "galleryBanner": {
     "color": "#1e1e1e",

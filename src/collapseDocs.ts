@@ -1,5 +1,9 @@
 import * as vscode from 'vscode';
 
+const PYTHON_DOC_LANGUAGE_ID = 'python';
+const JSDOC_LANGUAGE_IDS = ['javascript', 'typescript', 'javascriptreact', 'typescriptreact'];
+const SUPPORTED_LANGUAGE_IDS = [PYTHON_DOC_LANGUAGE_ID, ...JSDOC_LANGUAGE_IDS];
+
 export class CollapseDocsManager {
     foldedLines = new Set<string>();
     docstringCache = new Map<string, vscode.FoldingRange[]>();
@@ -15,21 +19,8 @@ export class CollapseDocsManager {
     getPythonFoldingProvider(): vscode.FoldingRangeProvider {
         return {
             provideFoldingRanges: (document: vscode.TextDocument): vscode.FoldingRange[] => {
-                if (document.languageId !== 'python') return [];
-                const text = document.getText();
-                const ranges: vscode.FoldingRange[] = [];
-                const docstringRegex = /("""|''')([\s\S]*?)(\1)/g;
-
-                let match: RegExpExecArray | null;
-                while ((match = docstringRegex.exec(text))) {
-                    const start = document.positionAt(match.index).line;
-                    const end = document.positionAt(match.index + match[0].length).line;
-                    if (end > start) {
-                        ranges.push(new vscode.FoldingRange(start, end));
-                    }
-                }
-                this.docstringCache.set(document.uri.toString(), ranges);
-                return ranges;
+                if (document.languageId !== PYTHON_DOC_LANGUAGE_ID) return [];
+                return this.collectFoldingRanges(document);
             }
         };
     }
@@ -37,23 +28,39 @@ export class CollapseDocsManager {
     getJsdocFoldingProvider(): vscode.FoldingRangeProvider {
         return {
             provideFoldingRanges: (document: vscode.TextDocument): vscode.FoldingRange[] => {
-                if (!['javascript', 'typescript'].includes(document.languageId)) return [];
-                const text = document.getText();
-                const ranges: vscode.FoldingRange[] = [];
-                const jsdocRegex = /\/\*\*([\s\S]*?)\*\//g;
-
-                let match: RegExpExecArray | null;
-                while ((match = jsdocRegex.exec(text))) {
-                    const start = document.positionAt(match.index).line;
-                    const end = document.positionAt(match.index + match[0].length).line;
-                    if (end > start) {
-                        ranges.push(new vscode.FoldingRange(start, end));
-                    }
-                }
-                this.docstringCache.set(document.uri.toString(), ranges);
-                return ranges;
+                if (!JSDOC_LANGUAGE_IDS.includes(document.languageId)) return [];
+                return this.collectFoldingRanges(document);
             }
         };
+    }
+
+    collectFoldingRanges(document: vscode.TextDocument): vscode.FoldingRange[] {
+        const text = document.getText();
+        const ranges: vscode.FoldingRange[] = [];
+        const docRegex = document.languageId === PYTHON_DOC_LANGUAGE_ID
+            ? /("""|''')([\s\S]*?)(\1)/g
+            : /\/\*\*([\s\S]*?)\*\//g;
+
+        let match: RegExpExecArray | null;
+        while ((match = docRegex.exec(text))) {
+            const start = document.positionAt(match.index).line;
+            const end = document.positionAt(match.index + match[0].length).line;
+            if (end > start) {
+                ranges.push(new vscode.FoldingRange(start, end));
+            }
+        }
+        this.docstringCache.set(document.uri.toString(), ranges);
+        return ranges;
+    }
+
+    getCachedOrCurrentRanges(document: vscode.TextDocument): vscode.FoldingRange[] {
+        return this.docstringCache.get(document.uri.toString()) ?? this.collectFoldingRanges(document);
+    }
+
+    areDocsFolded(document: vscode.TextDocument): boolean {
+        const docUri = document.uri.toString();
+        const ranges = this.getCachedOrCurrentRanges(document);
+        return ranges.length > 0 && ranges.every((range) => this.foldedLines.has(`${docUri}:${range.start}`));
     }
 
     async collapseDocsRun() {
@@ -61,10 +68,10 @@ export class CollapseDocsManager {
         if (!editor) return;
 
         const lang = editor.document.languageId;
-        if (!['python', 'javascript', 'typescript'].includes(lang)) return;
+        if (!SUPPORTED_LANGUAGE_IDS.includes(lang)) return;
 
         const docUri = editor.document.uri.toString();
-        const ranges = this.docstringCache.get(docUri) ?? [];
+        const ranges = this.getCachedOrCurrentRanges(editor.document);
 
         const decorations: vscode.DecorationOptions[] = [];
 
@@ -92,11 +99,25 @@ export class CollapseDocsManager {
         if (!editor) return;
 
         const lang = editor.document.languageId;
-        if (!['python', 'javascript', 'typescript'].includes(lang)) return;
+        if (!SUPPORTED_LANGUAGE_IDS.includes(lang)) return;
 
         await vscode.commands.executeCommand('editor.unfoldAll');
         editor.setDecorations(this.hideDecoration, []);
         this.foldedLines.clear();
+    }
+
+    async toggleDocs() {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+
+        const lang = editor.document.languageId;
+        if (!SUPPORTED_LANGUAGE_IDS.includes(lang)) return;
+
+        if (this.areDocsFolded(editor.document)) {
+            await this.unfoldDocs();
+        } else {
+            await this.collapseDocsRun();
+        }
     }
 
     dispose() {

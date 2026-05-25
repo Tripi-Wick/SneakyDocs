@@ -17,7 +17,12 @@ export function activate(context: vscode.ExtensionContext) {
 			collapseDocsManager.getPythonFoldingProvider()
 		),
 		vscode.languages.registerFoldingRangeProvider(
-			[{ language: 'javascript', scheme: 'file' }, { language: 'typescript', scheme: 'file' }],
+			[
+				{ language: 'javascript', scheme: 'file' },
+				{ language: 'typescript', scheme: 'file' },
+				{ language: 'javascriptreact', scheme: 'file' },
+				{ language: 'typescriptreact', scheme: 'file' }
+			],
 			collapseDocsManager.getJsdocFoldingProvider()
 		)
 	);
@@ -32,13 +37,17 @@ export function activate(context: vscode.ExtensionContext) {
 		await collapseDocsManager.unfoldDocs();
 	});
 
+	const toggleCommand = vscode.commands.registerCommand('collapseDocs.toggle', async () => {
+		await collapseDocsManager.toggleDocs();
+	});
+
 	// Export function command
 	const exportCommand = vscode.commands.registerCommand('collapseDocs.exportFunction', updateExportsBlock);
 
 	// Export function command
 	const generateCommand = vscode.commands.registerCommand('collapseDocs.generateDocs', insertGeneratedJSDoc);
 
-	context.subscriptions.push(foldCommand, unfoldCommand, exportCommand, generateCommand);
+	context.subscriptions.push(foldCommand, unfoldCommand, toggleCommand, exportCommand, generateCommand);
 }
 
 export function deactivate() {
