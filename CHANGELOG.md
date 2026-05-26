@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+### Added
+- Support for JSDoc folding in JSX (`.jsx`) and TSX (`.tsx`) files.
+- New **Toggle Collapse Docs** command with a default `Ctrl+Shift+Alt+D` keybinding.
+
 ## [1.3.0] - 2025-05-20
 ### Added
 - New context menu command: **Generate JSDoc for Function**
