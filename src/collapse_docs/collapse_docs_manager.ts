@@ -33,6 +33,18 @@ export class CollapseDocsManager implements vscode.Disposable {
         }
     }
 
+    // Collapse-only entry point for auto-collapse on open: folds the editor's doc
+    // blocks if its language is supported and they are not already folded.
+    public async collapseDocs(editor: vscode.TextEditor) {
+        const provider = this.getActiveProvider(editor);
+        if (!provider) return;
+
+        const ranges = provider.provideFoldingRanges(editor.document);
+        if (this.areDocsFolded(editor.document, ranges)) return;
+
+        await this.collapseDocsRun(editor, provider, ranges);
+    }
+
     // Drop remembered fold state for a document (e.g. when it is closed) so a
     // later reopen starts fresh instead of being treated as already folded.
     public forgetDocument(document: vscode.TextDocument) {

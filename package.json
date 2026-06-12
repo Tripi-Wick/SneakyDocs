@@ -3,7 +3,7 @@
   "displayName": "Collapse Docs",
   "description": "Quickly collapse or uncollapse all docstrings and JSDoc comments via right-click menu.",
   "publisher": "Oskarlypka",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "engines": {
     "vscode": "^1.60.0"
   },
@@ -38,7 +38,17 @@
         "key": "ctrl+shift+alt+d",
         "when": "editorTextFocus && (editorLangId == javascript || editorLangId == typescript || editorLangId == javascriptreact || editorLangId == typescriptreact || editorLangId == python)"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Collapse Docs",
+      "properties": {
+        "collapseDocs.autoCollapseOnOpen": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically collapse documentation blocks the first time a supported file is opened."
+        }
+      }
+    }
   },
   "galleryBanner": {
     "color": "#1e1e1e",
