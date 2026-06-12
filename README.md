@@ -11,7 +11,17 @@
   - JSDoc comments using `/** ... */` in JavaScript, TypeScript, JSX, and TSX files
 - Helps improve code readability by hiding large documentation blocks
 - Toggles supported doc blocks between collapsed and expanded states with one command
+- Keeps the line you were on centered after collapsing, so the view does not jump
 - Automatically handles folded region highlight color for seamless integration with your theme
+
+## What's New
+
+### 1.5.0
+
+- **Reliable first toggle** — collapsing now folds every doc block on the first command after a file opens. Previously the first toggle could leave some or all blocks expanded, and only a second toggle worked.
+- **Stable viewport** — the line you were on stays centered after collapsing, so the file no longer appears to jump as hidden content shifts upward.
+
+See [CHANGELOG.md](CHANGELOG.md) for the full history.
 
 ## Supported Languages
 

@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [1.5.0] - 2026-06-07
+### Added
+- After collapsing, the editor keeps the line you were on centered in view, so
+  the file no longer appears to jump as the hidden content shifts upward.
 ### Fixed
 - The first **Toggle Collapse Docs** after opening a file now collapses every
   doc block. VS Code builds its folding model asynchronously, so the initial

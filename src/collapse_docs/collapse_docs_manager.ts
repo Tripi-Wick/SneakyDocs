@@ -93,12 +93,14 @@ export class CollapseDocsManager implements vscode.Disposable {
 
         if (linesToFold.length === 0) return;
 
+        const anchorLine = editor.selection.active.line;
         if (!(await this.foldLines(editor, provider, linesToFold))) return;
 
         for (const line of linesToFold) {
             this.foldedLines.add(`${docUri}:${line}`);
         }
         this.applyHideDecorations(editor, ranges);
+        this.keepLineCentered(editor, anchorLine);
     }
 
     // VS Code builds its folding model asynchronously and knows the big regions
@@ -145,6 +147,12 @@ export class CollapseDocsManager implements vscode.Disposable {
         }
 
         editor.setDecorations(this.hideDecoration, decorations);
+    }
+
+    // Collapsing shifts the remaining content upward, so re-reveal the line the
+    // user was on, centered, to keep their focus in place instead of jumping.
+    private keepLineCentered(editor: vscode.TextEditor, line: number) {
+        editor.revealRange(new vscode.Range(line, 0, line, 0), vscode.TextEditorRevealType.InCenter);
     }
 
     private async unfoldDocs(editor: vscode.TextEditor, ranges: vscode.FoldingRange[]) {
