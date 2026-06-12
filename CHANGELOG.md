@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 ### Added
 - After collapsing, the editor keeps the line you were on centered in view, so
   the file no longer appears to jump as the hidden content shifts upward.
+### Changed
+- The extension no longer writes `editor.foldingHighlight: false` into your
+  global settings on activation. Collapsed doc header lines are blended with a
+  decoration scoped to those lines instead, so folding highlights elsewhere
+  keep working. If a previous version changed the setting for you, you can
+  re-enable it in your settings.
 ### Fixed
 - The first **Toggle Collapse Docs** after opening a file now collapses every
   doc block. VS Code builds its folding model asynchronously, so the initial

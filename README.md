@@ -12,7 +12,7 @@
 - Helps improve code readability by hiding large documentation blocks
 - Toggles supported doc blocks between collapsed and expanded states with one command
 - Keeps the line you were on centered after collapsing, so the view does not jump
-- Automatically handles folded region highlight color for seamless integration with your theme
+- Blends collapsed doc lines into the editor background, without changing your settings
 
 ## What's New
 

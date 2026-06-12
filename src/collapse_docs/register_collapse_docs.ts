@@ -3,9 +3,7 @@ import { CollapseDocsManager } from './collapse_docs_manager';
 import { PythonFoldingProvider } from './providers/python_provider';
 import { JSDocFoldingProvider } from './providers/jsdoc_provider';
 
-export async function registerCollapseDocs(context: vscode.ExtensionContext): Promise<void> {
-    await disableFoldingHighlight();
-
+export function registerCollapseDocs(context: vscode.ExtensionContext): void {
     const pythonProvider = new PythonFoldingProvider();
     const jsdocProvider = new JSDocFoldingProvider();
 
@@ -29,11 +27,4 @@ export async function registerCollapseDocs(context: vscode.ExtensionContext): Pr
         vscode.workspace.onDidChangeTextDocument(event => manager.handleDocumentChange(event)),
         vscode.workspace.onDidCloseTextDocument(document => manager.forgetDocument(document))
     );
-}
-
-async function disableFoldingHighlight(): Promise<void> {
-    const config = vscode.workspace.getConfiguration();
-    if (config.get('editor.foldingHighlight') !== false) {
-        await config.update('editor.foldingHighlight', false, vscode.ConfigurationTarget.Global);
-    }
 }
