@@ -48,6 +48,39 @@ export class CollapseDocsManager implements vscode.Disposable {
         }
     }
 
+    // Tracked keys are block start lines, which shift as the user edits above
+    // them while VS Code moves the folds and decorations along with the text.
+    // Follow the same shifts (and drop lines edited away) so toggling still
+    // reads and writes the right state after edits.
+    public handleDocumentChange(event: vscode.TextDocumentChangeEvent) {
+        const prefix = `${event.document.uri.toString()}:`;
+        let lines: number[] = [];
+        for (const key of this.foldedLines) {
+            if (key.startsWith(prefix)) {
+                lines.push(Number(key.slice(prefix.length)));
+            }
+        }
+        if (lines.length === 0) return;
+
+        for (const change of event.contentChanges) {
+            const start = change.range.start.line;
+            const end = change.range.end.line;
+            const delta = change.text.split('\n').length - 1 - (end - start);
+            lines = lines
+                .filter(line => line <= start || line > end)
+                .map(line => (line > end ? line + delta : line));
+        }
+
+        for (const key of this.foldedLines) {
+            if (key.startsWith(prefix)) {
+                this.foldedLines.delete(key);
+            }
+        }
+        for (const line of lines) {
+            this.foldedLines.add(`${prefix}${line}`);
+        }
+    }
+
     private async collapseDocsRun(
         editor: vscode.TextEditor,
         provider: DocFoldingProvider,

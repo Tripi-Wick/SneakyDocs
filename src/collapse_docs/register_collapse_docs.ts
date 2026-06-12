@@ -24,8 +24,9 @@ export async function registerCollapseDocs(context: vscode.ExtensionContext): Pr
         vscode.commands.registerCommand('collapseDocs.toggle', async () => {
             await manager.toggleDocs();
         }),
-        // Fold state is remembered per document; drop it when the document
-        // closes so a later reopen starts fresh.
+        // Fold state is remembered per document; it follows edits and is
+        // dropped when the document closes so a later reopen starts fresh.
+        vscode.workspace.onDidChangeTextDocument(event => manager.handleDocumentChange(event)),
         vscode.workspace.onDidCloseTextDocument(document => manager.forgetDocument(document))
     );
 }

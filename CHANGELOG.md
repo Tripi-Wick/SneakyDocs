@@ -16,6 +16,8 @@ All notable changes to this project will be documented in this file.
 - The toggle now only acts on regular files on disk, matching where the folding
   providers are registered; diff and preview editors no longer risk folding the
   wrong region.
+- Fold tracking now follows the file as you edit, so toggling still collapses
+  and expands correctly after changes above a collapsed block.
 - Reopening a previously collapsed file no longer mis-toggles: remembered fold
   state is dropped when a document closes.
 
