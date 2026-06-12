@@ -12,6 +12,7 @@ export async function registerCollapseDocs(context: vscode.ExtensionContext): Pr
     const manager = new CollapseDocsManager([pythonProvider, jsdocProvider]);
 
     context.subscriptions.push(
+        manager,
         vscode.languages.registerFoldingRangeProvider(
             pythonProvider.getDocumentSelectorsMap(),
             pythonProvider
@@ -22,7 +23,10 @@ export async function registerCollapseDocs(context: vscode.ExtensionContext): Pr
         ),
         vscode.commands.registerCommand('collapseDocs.toggle', async () => {
             await manager.toggleDocs();
-        })
+        }),
+        // Fold state is remembered per document; drop it when the document
+        // closes so a later reopen starts fresh.
+        vscode.workspace.onDidCloseTextDocument(document => manager.forgetDocument(document))
     );
 }
 
