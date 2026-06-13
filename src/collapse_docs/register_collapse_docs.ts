@@ -2,12 +2,14 @@ import * as vscode from 'vscode';
 import { CollapseDocsManager } from './collapse_docs_manager';
 import { PythonFoldingProvider } from './providers/python_provider';
 import { JSDocFoldingProvider } from './providers/jsdoc_provider';
+import { CStyleFoldingProvider } from './providers/c_style_provider';
 
 export function registerCollapseDocs(context: vscode.ExtensionContext): void {
     const pythonProvider = new PythonFoldingProvider();
     const jsdocProvider = new JSDocFoldingProvider();
+    const cStyleProvider = new CStyleFoldingProvider();
 
-    const manager = new CollapseDocsManager([pythonProvider, jsdocProvider]);
+    const manager = new CollapseDocsManager([pythonProvider, jsdocProvider, cStyleProvider]);
 
     context.subscriptions.push(
         manager,
@@ -18,6 +20,10 @@ export function registerCollapseDocs(context: vscode.ExtensionContext): void {
         vscode.languages.registerFoldingRangeProvider(
             jsdocProvider.getDocumentSelectorsMap(),
             jsdocProvider
+        ),
+        vscode.languages.registerFoldingRangeProvider(
+            cStyleProvider.getDocumentSelectorsMap(),
+            cStyleProvider
         ),
         vscode.commands.registerCommand('collapseDocs.toggle', async () => {
             await manager.toggleDocs();
